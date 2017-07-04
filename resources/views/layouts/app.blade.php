@@ -21,15 +21,14 @@
     </script>
 
     <style>
-
-        body{padding-bottom: 100px}
-        .level{ display: flex; align-items: center;}
-        .flex{ flex:1;}
+        body { padding-bottom: 100px; }
+        .level { display: flex; align-items: center; }
+        .flex { flex: 1; }
     </style>
 </head>
-<body style="padding-bottom: 100px;">
+<body>
 <div id="app">
-    @include('layouts._nav')
+    @include ('layouts.nav')
 
     @yield('content')
 </div>

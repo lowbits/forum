@@ -14,21 +14,18 @@
                                     </a>
                                 </h4>
 
-
-                                <a href="{{ $thread->path() }}">{{ $thread->replies_count }} {{str_plural('reply', $thread->replies_count)}}</a>
+                                <a href="{{ $thread->path() }}">
+                                    {{ $thread->replies_count }} {{ str_plural('reply', $thread->replies_count) }}
+                                </a>
                             </div>
                         </div>
 
                         <div class="panel-body">
-
-
-                                    <div class="body">{{ $thread->body }}</div>
-
-
+                            <div class="body">{{ $thread->body }}</div>
                         </div>
                     </div>
                 @empty
-                    <p>There are no relevant results at this time</p>
+                    <p>There are no relevant results at this time.</p>
                 @endforelse
             </div>
         </div>

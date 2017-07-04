@@ -1,22 +1,26 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Tobias
- * Date: 13.06.2017
- * Time: 16:40
- */
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Model;
 
 trait Favoritable
 {
-
+    /**
+     * A reply can be favorited.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
     public function favorites()
     {
         return $this->morphMany(Favorite::class, 'favorited');
     }
 
+    /**
+     * Favorite the current reply.
+     *
+     * @return Model
+     */
     public function favorite()
     {
         $attributes = ['user_id' => auth()->id()];
@@ -26,13 +30,20 @@ trait Favoritable
         }
     }
 
+    /**
+     * Determine if the current reply has been favorited.
+     *
+     * @return boolean
+     */
     public function isFavorited()
     {
-        return !!$this->favorites->where('user_id', auth()->id())->count();
+        return !! $this->favorites->where('user_id', auth()->id())->count();
     }
 
     /**
-     * @return mixed
+     * Get the number of favorites for the reply.
+     *
+     * @return integer
      */
     public function getFavoritesCountAttribute()
     {

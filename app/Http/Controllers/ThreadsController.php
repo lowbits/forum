@@ -17,7 +17,6 @@ class ThreadsController extends Controller
         $this->middleware('auth')->except(['index', 'show']);
     }
 
-
     /**
      * Display a listing of the resource.
      *
@@ -29,7 +28,7 @@ class ThreadsController extends Controller
     {
         $threads = $this->getThreads($channel, $filters);
 
-        if(request()->wantsJson()){
+        if (request()->wantsJson()) {
             return $threads;
         }
 
@@ -73,34 +72,36 @@ class ThreadsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  integer     $channelId
+     * @param  integer     $channel
      * @param  \App\Thread $thread
      * @return \Illuminate\Http\Response
      */
     public function show($channel, Thread $thread)
     {
-
         return view('threads.show', [
             'thread' => $thread,
-            'replies' => $thread->replies()->paginate(25)
+            'replies' => $thread->replies()->paginate(20)
         ]);
     }
 
-    public function destroy($channel, Thread $thread){
-
+    /**
+     * Delete the given thread.
+     *
+     * @param        $channel
+     * @param Thread $thread
+     * @return mixed
+     */
+    public function destroy($channel, Thread $thread)
+    {
         $this->authorize('update', $thread);
 
-        if ($thread->user_id != auth()->id()){
-              abort(403, 'You do not have permission to do this');
-        }
         $thread->delete();
 
-        if(request()->wantsJson()){
+        if (request()->wantsJson()) {
             return response([], 204);
         }
+
         return redirect('/threads');
-
-
     }
 
     /**
@@ -117,7 +118,6 @@ class ThreadsController extends Controller
         if ($channel->exists) {
             $threads->where('channel_id', $channel->id);
         }
-
 
         return $threads->get();
     }
