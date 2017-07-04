@@ -13,6 +13,8 @@ class Thread extends Model
      *
      * @var array
      */
+    use RecordsActivity;
+
     protected $guarded = [];
 
     protected $with = ['creator', 'channel'];
