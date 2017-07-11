@@ -36,7 +36,7 @@ class Thread extends Model
         });
 
         static::deleting(function ($thread) {
-            $thread->replies()->delete();
+            $thread->replies->each->delete();
         });
     }
 
@@ -83,11 +83,12 @@ class Thread extends Model
     /**
      * Add a reply to the thread.
      *
-     * @param $reply
+     * @param  array $reply
+     * @return Reply
      */
     public function addReply($reply)
     {
-        $this->replies()->create($reply);
+        return $this->replies()->create($reply);
     }
 
     /**
