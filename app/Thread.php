@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Filters\ThreadFilters;
+use App\Notifications\ThreadWasUpdated;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,16 +25,14 @@ class Thread extends Model
      */
     protected $with = ['creator', 'channel'];
 
+    protected  $appends = ['isSubscribedTo'];
+
     /**
      * Boot the model.
      */
     protected static function boot()
     {
         parent::boot();
-
-        static::addGlobalScope('replyCount', function ($builder) {
-            $builder->withCount('replies');
-        });
 
         static::deleting(function ($thread) {
             $thread->replies->each->delete();
@@ -84,11 +83,21 @@ class Thread extends Model
      * Add a reply to the thread.
      *
      * @param  array $reply
-     * @return Reply
+     * @return Model
      */
     public function addReply($reply)
     {
-        return $this->replies()->create($reply);
+        $reply = $this->replies()->create($reply);
+
+        $this->subscriptions
+            ->filter(function ($sub) use ($reply){
+            return $sub->user_id != $reply->user_id;
+        })
+        ->each->notify($reply);
+
+
+
+        return $reply;
     }
 
     /**
@@ -101,5 +110,32 @@ class Thread extends Model
     public function scopeFilter($query, ThreadFilters $filters)
     {
         return $filters->apply($query);
+    }
+
+
+    public function subscribe($userId = null)
+    {
+        $this->subscriptions()->create([
+            'user_id' => $userId ?: auth()->id()
+        ]);
+
+        return $this;
+    }
+
+   public function unsubscribe($userId = null)
+   {
+       $this->subscriptions()->where('user_id', $userId ?: auth()->id())->delete();
+   }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(ThreadSubscription::class);
+    }
+
+    public function getIsSubscribedToAttribute()
+    {
+        return $this->subscriptions()
+            ->where('user_id', auth()->id())
+            ->exists();
     }
 }

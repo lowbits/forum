@@ -29,11 +29,7 @@
                         </div>
                     </div>
 
-                    <replies :data="{{ $thread->replies }}"
-                        @added="repliesCount++"
-                        @removed="repliesCount--"></replies>
-
-                    {{--{{ $replies->links() }}--}}
+                    <replies @added="repliesCount++" @removed="repliesCount--"></replies>
                 </div>
 
                 <div class="col-md-4">
@@ -45,6 +41,10 @@
                                 has <span
                                         v-text="repliesCount"></span> {{ str_plural('comment', $thread->replies_count) }}
                                 .
+                            </p>
+
+                            <p>
+                                <subscribe-button :active=" {{ json_encode($thread->isSubscribedTo) }}"></subscribe-button>
                             </p>
                         </div>
                     </div>
