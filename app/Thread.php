@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\ThreadHasNewReply;
 use App\Filters\ThreadFilters;
 use App\Notifications\ThreadWasUpdated;
 use Illuminate\Database\Eloquent\Builder;
@@ -87,16 +88,23 @@ class Thread extends Model
      */
     public function addReply($reply)
     {
+
         $reply = $this->replies()->create($reply);
 
+       // event(new ThreadHasNewReply($this, $reply));  Kann man auch nutzen machen wir aber derzeit noch nicht
+
+        $this->notifySubscribers($reply);
+
+        return $reply;
+    }
+
+    public function notifySubscribers($reply)
+
+    {
         $this->subscriptions
             ->where('user_id', '!=', $reply->user_id)
             ->each
             ->notify($reply);
-
-
-
-        return $reply;
     }
 
     /**
@@ -136,5 +144,14 @@ class Thread extends Model
         return $this->subscriptions()
             ->where('user_id', auth()->id())
             ->exists();
+    }
+
+    public function hasUpdatesFor($user)
+    {
+
+
+        $key = $user->visitedThreadCacheKey($this);
+
+        return $this->updated_at > cache($key);
     }
 }
