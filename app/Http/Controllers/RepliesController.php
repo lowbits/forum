@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Reply;
-use App\Spam;
+use App\Inspections\Spam;
 use App\Thread;
 use Mockery\Exception;
 
@@ -26,7 +26,8 @@ class RepliesController extends Controller
      * Persist a new reply.
      *
      * @param  integer $channelId
-     * @param  Thread  $thread
+     * @param  Thread $thread
+     * @param App\Insepctions\Spam $spam
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store($channelId, Thread $thread, Spam $spam)
