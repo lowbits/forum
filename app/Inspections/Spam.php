@@ -12,6 +12,7 @@ class Spam
 
         InvalidKeywords::class,
         KeyHeldDown::class
+
     ];
 
     public function detect($body)
@@ -22,7 +23,6 @@ class Spam
             app($inspection)->detect($body);
 
         }
-
 
 
         return false;

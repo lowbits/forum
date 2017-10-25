@@ -1,5 +1,5 @@
 export default {
-    date() {
+    data() {
         return {
             items: []
         };
@@ -16,7 +16,6 @@ export default {
             this.items.splice(index, 1);
 
             this.$emit('removed');
-
         }
     }
 }
